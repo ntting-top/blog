@@ -13,8 +13,8 @@ function App() {
       <Router>
         <Suspense fallback={<div className='loading_page'>Loading...</div>}>
         <Routes>
-          <Route element={ <Comic /> } path="/" />
-          <Route element={ <Floating /> } path="/floating" />
+          <Route element={ <Comic /> } path="/comic" />
+          <Route element={ <Floating /> } path="/" />
           <Route element={ <Scroll /> } path="/scroll" />
         </Routes>
         </Suspense>
