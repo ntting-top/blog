@@ -3,10 +3,15 @@ import React from 'react';
 import * as THREE from 'three';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { GlitchPass } from 'three/examples/jsm/postprocessing/GlitchPass.js';
 export default class Earth extends React.Component {
 
   state = {
-    backgroundColor: '#164CCA'
+    backgroundColor: '#164CCA',
+    isAnimationRunning: true,
+    isMusicPlaying: true
   }
 
   componentDidMount() {
@@ -34,10 +39,18 @@ export default class Earth extends React.Component {
     const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, nearDist, farDist);
     camera.position.set(-2 * farDist, 0, 780);
 
+     // 后期
+     const composer = new EffectComposer(renderer);
+     composer.addPass( new RenderPass(scene, camera));
+     const glitchPass = new GlitchPass();
+     composer.addPass(glitchPass);
+
     // 页面缩放
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      composer.setSize(window.innerWidth, window.innerHeight);
     }, false);
 
     // 双击全屏
@@ -130,21 +143,23 @@ export default class Earth extends React.Component {
 
     // 动画
     const animate = () => {
-      requestAnimationFrame(animate);
-      camera.position.x += (mouseX - camera.position.x) * 0.05;
-      camera.position.y += (mouseY * -1 - camera.position.y) * 0.05;
-      camera.lookAt(scene.position);
-      const t = Date.now() * 0.001;
-      const rx = Math.sin(t * 0.7) * 0.5;
-      const ry = Math.sin(t * 0.3) * 0.5;
-      const rz = Math.sin(t * 0.2) * 0.5;
-      group.rotation.x = rx;
-      group.rotation.y = ry;
-      group.rotation.z = rz;
-      textMesh.rotation.x = rx;
-      textMesh.rotation.y = ry;
-      textMesh.rotation.z = rx;
-      renderer.render(scene, camera);
+      if(this.state.isAnimationRunning) {
+        requestAnimationFrame(animate);
+        camera.position.x += (mouseX - camera.position.x) * 0.05;
+        camera.position.y += (mouseY * -1 - camera.position.y) * 0.05;
+        camera.lookAt(scene.position);
+        const t = Date.now() * 0.001;
+        const rx = Math.sin(t * 0.7) * 0.5;
+        const ry = Math.sin(t * 0.3) * 0.5;
+        const rz = Math.sin(t * 0.2) * 0.5;
+        group.rotation.x = rx;
+        group.rotation.y = ry;
+        group.rotation.z = rz;
+        textMesh.rotation.x = rx;
+        textMesh.rotation.y = ry;
+        textMesh.rotation.z = rx;
+        renderer.render(scene, camera);
+      }
     }
     animate();
   }
@@ -155,17 +170,45 @@ export default class Earth extends React.Component {
     })
   }
 
-  handleRenderChange = () => {
-    this.setState({
-      
+
+  toggleMusicPlaying = () => {
+    const audio = document.getElementById('backgroundMusic')    
+    
+    if(audio) {
+      if(this.state.isMusicPlaying) {
+        console.log('=========');
+        console.log(audio);
+        audio.pause()
+      } else {
+        audio.play()
+      }
+      this.setState(prevState => ({
+        isMusicPlaying: !prevState.isMusicPlaying
+      }))
+    }
+  }
+  toggleAnimation = () => {
+    this.setState(prevState => ({
+      isAnimationRunning: !prevState.isAnimationRunning
+    }), () => {
+      if(this.state.isAnimationRunning) {
+        this.initThree()
+      }
     })
   }
+
 
   render () {
     return (
       <div className='floating_page' style={{ backgroundColor: this.state.backgroundColor }}>
         <div id='canvas'></div>
-        <input className='color_pick' type='color' onChange={this.handleInputChange} value={this.state.backgroundColor} />
+        {/* <input className='color_pick' type='color' onChange={this.handleInputChange} value={this.state.backgroundColor} /> */}
+        <button  className='color_pick' onClick={this.toggleAnimation} >
+          {this.state.isAnimationRunning ? '太眩晕了，关掉动画' : '开启动画!'}
+        </button>
+        {/* <button  className='color_pick' onClick={this.toggleMusicPlaying} >
+          {this.state.isMusicPlaying ? '关掉音乐！' : '来点牛逼哄哄的小曲听听'}
+        </button> */}
         <div className='container'>
           <div className='titleBar'>
             <a className='github' href='https://github.com/ntting-top' target='_blank' rel='noreferrer'>
