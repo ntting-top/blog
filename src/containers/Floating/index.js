@@ -202,8 +202,8 @@ export default class Earth extends React.Component {
     return (
       <div className='floating_page' style={{ backgroundColor: this.state.backgroundColor }}>
         <div id='canvas'></div>
-        {/* <input className='color_pick' type='color' onChange={this.handleInputChange} value={this.state.backgroundColor} /> */}
-        <button  className='color_pick' onClick={this.toggleAnimation} >
+        <input className='color_pick' type='color' onChange={this.handleInputChange} value={this.state.backgroundColor} />
+        <button  className='animate_pick' onClick={this.toggleAnimation} >
           {this.state.isAnimationRunning ? '太眩晕了，关掉动画' : '开启动画!'}
         </button>
         {/* <button  className='color_pick' onClick={this.toggleMusicPlaying} >
