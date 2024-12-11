@@ -78,8 +78,7 @@
     "build": "node scripts/build.js",
     "test": "node scripts/test.js",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
-    "vercel": "vercel --prod"
+    "deploy": "gh-pages -d build --repo git@github.com:ntting-top/blog.git --remote origin"
   },
   "eslintConfig": {
     "extends": [
@@ -99,7 +98,7 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "https://ntting-top.github.io/blog/",
+  "homepage": "https://ntting-top.github.io/blog",
   "jest": {
     "roots": [
       "<rootDir>/src"
@@ -161,5 +160,8 @@
     "stylus-loader": "^6.2.0",
     "vercel": "^28.2.5",
     "webpack-glsl-loader": "^1.0.1"
+  },
+  "repository": {
+    "url": "git@github.com:ntting-top/blog.git"
   }
 }
